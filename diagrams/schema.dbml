@@ -1,0 +1,102 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table users {
+  user_id uuid [primary key]
+  user_name varchar [not null, unique]
+  email varchar [not null, unique]
+  password varchar [not null]
+  created_at timestamp [default: `now()`]
+}
+
+Table tokens {
+  token_id uuid [primary key]
+  user_id uuid [not null]
+  token_hash varchar [not null, unique]
+  created_at timestamp [not null, default: `now()`]
+  expires_at timestamp [not null]
+  revoked bool [default: false, not null]
+}
+
+Table projects {
+  project_id uuid [primary key]
+  project_name varchar [not null]
+  description varchar
+  user_id uuid [not null]
+  last_activity timestamp
+  created_at timestamp [default: `now()`]
+}
+
+Table configurations {
+  configuration_id uuid [primary key]
+  chunk_size int [not null, default: 512]
+  overlap_size int [not null, default: 50]
+  project_id uuid [not null, unique]
+}
+
+Enum document_type {
+  PDF
+  URL
+  TXT
+}
+
+Enum document_status {
+  PENDING
+  PROCESSING
+  INDEXED
+  ERROR
+}
+
+Table documents {
+  document_id uuid [primary key]
+  document_name varchar [not null]
+  type document_type [not null]
+  status document_status [not null]
+  project_id uuid [not null]
+  source_url varchar
+  created_at timestamp 
+  indexed_at timestamp
+  chunks_number int [default: 0]
+  file_size int [default: 0]
+  s3_key varchar 
+  error_message text  
+}
+
+Table chunks {
+  chunk_id uuid [primary key]
+  document_id uuid [not null]
+  content text [not null]
+  embedding vector(1536) [not null]
+  metadata jsonb
+}
+
+Table conversations {
+  conversation_id uuid [primary key]
+  project_id uuid [not null]
+  user_id uuid [not null]
+  conversation_name varchar [not null]
+  last_activity timestamp
+  created_at timestamp [default: `now()`]
+}
+
+Enum message_role {
+  ASSISTANT
+  USER
+}
+
+Table messages {
+  message_id uuid [primary key]
+  conversation_id uuid [not null]
+  content text [not null]
+  role message_role [not null]
+  sent_at timestamp [not null]
+}
+
+Ref: users.user_id < tokens.user_id [delete: cascade]
+Ref: users.user_id < projects.user_id [delete: cascade]
+Ref: projects.project_id < documents.project_id [delete: cascade]
+Ref: projects.project_id < configurations.project_id [delete: cascade]
+Ref: documents.document_id < chunks.document_id [delete: cascade]
+Ref: projects.project_id < conversations.project_id [delete: cascade]
+Ref: users.user_id < conversations.user_id [delete: cascade]
+Ref: conversations.conversation_id < messages.conversation_id [delete: cascade]
