@@ -1,0 +1,50 @@
+graph TB
+    Client(["🖥️ Client"])
+
+    subgraph Public["Public"]
+        MainAPI["Main API
+        ─────────────────
+        Auth · Projects
+        Documents · Conversations
+        Indexing"]
+    end
+
+    subgraph Private["Private (ClusterIP)"]
+        AgentService["Agent Service
+        ─────────────────
+        LangGraph · Multi-Agent
+        RAG · Memory · Streaming"]
+
+        MCPServer["MCP Server
+        ─────────────────
+        search_arxiv
+        export_markdown
+        index_document"]
+    end
+
+    subgraph Data["Data layer"]
+        PG[("PostgreSQL + pgvector
+        ─────────────────
+        app schema
+        langgraph schema
+        langgraph_store schema")]
+
+        S3[("AWS S3
+        ─────────────────
+        Original documents")]
+    end
+
+    Client -->|"HTTPS + JWT"| MainAPI
+
+    MainAPI -->|"API Key (X-API-Key)"| AgentService
+    MainAPI -->|"R/W"| PG
+    MainAPI -->|"Upload / Download"| S3
+
+    AgentService -->|"API Key (X-API-Key)"| MCPServer
+    AgentService -->|"Checkpointer · Store · pgvector"| PG
+
+    MCPServer -->|"Trigger Indexing"| MainAPI
+
+    style Public fill:#dbeafe,stroke:#3b82f6,color:#000
+    style Private fill:#fef9c3,stroke:#eab308,color:#000
+    style Data fill:#dcfce7,stroke:#22c55e,color:#000
