@@ -1,11 +1,26 @@
 from fastapi import FastAPI
 from auth.router import router as auth_router
 import uvicorn
-from dotenv import load_dotenv
 from config import settings
+from typing import AsyncIterator
+from contextlib import asynccontextmanager
+from db import get_db_connection_pool
+from log import setup_logger
 
-load_dotenv()
-app = FastAPI()
+logger = setup_logger("main")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    logger.info("Starting up FastAPI server")
+
+    db_pool = get_db_connection_pool()
+    await db_pool.open()
+    yield
+
+    logger.info("Shutting down FastAPI server.")
+    await db_pool.close()
+
+app = FastAPI(lifespan=lifespan)
 app.include_router(auth_router)
 
 @app.get("/")
