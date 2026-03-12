@@ -9,6 +9,8 @@ services:
       - ENVIRONMENT=LOCAL
       - LOG_LEVEL=INFO
       - API_PORT=8000
+    secrets:
+      - db_password
     depends_on:
       database:
         condition: service_healthy
