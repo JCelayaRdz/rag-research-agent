@@ -204,4 +204,6 @@ pip-selfcheck.json
 .history
 .ionide
 
+docker_secrets/
+
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,venv
