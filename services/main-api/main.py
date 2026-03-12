@@ -2,12 +2,9 @@ from fastapi import FastAPI
 from auth.router import router as auth_router
 import uvicorn
 from dotenv import load_dotenv
-from config import Config
+from config import settings
 
 load_dotenv()
-
-config = Config()
-
 app = FastAPI()
 app.include_router(auth_router)
 
@@ -18,4 +15,4 @@ async def root():
     }
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=config.API_PORT, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=settings.API_PORT, reload=True)

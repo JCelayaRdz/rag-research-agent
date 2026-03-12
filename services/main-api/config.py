@@ -17,3 +17,5 @@ class Config(BaseSettings):
         if self.ENVIRONMENT == "PRODUCTION" and not self.DATABASE_PARAMETER_NAME:
             raise ValueError("'DATABASE_PARAMETER_NAME' not set in production environment")
         return self
+    
+settings = Config()
