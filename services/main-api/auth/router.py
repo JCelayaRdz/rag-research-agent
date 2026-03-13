@@ -8,7 +8,7 @@ from typing import Annotated
 from starlette import status
 
 from db import db_conn
-from user.repository import add_user, retrive_unique_email_and_username
+from user.repository import add_user, exists_email_or_username
 from auth.schemas import UserSignUpIn, UserSignUpOut
 from log import setup_logger
 
@@ -22,7 +22,7 @@ router = APIRouter(
 @router.post("/signup", status_code=status.HTTP_201_CREATED, response_model=UserSignUpOut)
 async def sign_up(user: UserSignUpIn, db: Annotated[Connection, Depends(db_conn)]) -> UserSignUpOut:
     logger.info(f"User[user_name={user.user_name}, email={user.email}] trying to sign up")
-    exists = await retrive_unique_email_and_username(db, user)
+    exists = await exists_email_or_username(db, user)
 
     if exists:
         logger.warning(f"Attempt to sign up with existing email: {user.email} or user name: {user.user_name}")

@@ -4,7 +4,7 @@ from pwdlib import PasswordHash
 
 password_hash = PasswordHash.recommended()
 
-async def retrive_unique_email_and_username(conn: Connection, user: UserSignUpIn) -> str:
+async def exists_email_or_username(conn: Connection, user: UserSignUpIn) -> str:
     async with conn.cursor() as acur:
         await acur.execute(
             "SELECT user_name, email FROM users WHERE user_name = %s OR email = %s",
