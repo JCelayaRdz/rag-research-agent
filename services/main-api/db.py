@@ -1,8 +1,8 @@
-from pyscopg import Connection
+from psycopg import Connection
 from psycopg_pool import AsynConnectionPool
 from config import settings
 from fastapi import Request
-from typing import cast
+from typing import cast, AsyncGenerator
 
 def get_db_connection_pool() -> AsynConnectionPool:
     return AsynConnectionPool(
@@ -10,7 +10,7 @@ def get_db_connection_pool() -> AsynConnectionPool:
         open=False
     )
 
-async def db_conn(request: Request) -> Connection:
+async def db_conn(request: Request) -> AsyncGenerator[Connection, None]:
     db_pool = cast(AsynConnectionPool, request.state.db_pool)
     async with db_pool.connection() as conn:
         yield conn
