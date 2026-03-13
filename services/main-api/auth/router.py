@@ -1,5 +1,8 @@
 from fastapi import APIRouter
 from starlette import status
+from log import setup_logger
+
+logger = setup_logger("AuthRouter")
 
 router = APIRouter(
     prefix="/api/v1/auth",
