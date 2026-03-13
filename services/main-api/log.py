@@ -2,7 +2,7 @@ import logging
 import sys
 from config import settings
 
-LOG_FORMAT = "%(asctime)s [%(levelname)s %(name)s] - [%(funcname)s]: %(message)s"
+LOG_FORMAT = "%(asctime)s [%(levelname)s %(name)s] - [%(funcName)s]: %(message)s"
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 def setup_logger(name: str) -> logging.Logger:
