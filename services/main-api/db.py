@@ -11,6 +11,6 @@ def get_db_connection_pool() -> AsyncConnectionPool:
     )
 
 async def db_conn(request: Request) -> AsyncGenerator[Connection, None]:
-    db_pool = cast(AsyncConnectionPool, request.state.db_pool)
+    db_pool = cast(AsyncConnectionPool, request.app.state.db_pool)
     async with db_pool.connection() as conn:
         yield conn
