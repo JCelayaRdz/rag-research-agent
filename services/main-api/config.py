@@ -6,11 +6,15 @@ from pydantic import (
     computed_field
 )
 from typing import Literal, Self
+import os
+
+from constants import SECRETS_DIR
 
 class Config(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
-        secrets_dir="/run/secrets"
+        secrets_dir=SECRETS_DIR if os.path.isdir(SECRETS_DIR) else None,
+        extra="allow"
     )
 
     API_VERSION: str = "1.0"
