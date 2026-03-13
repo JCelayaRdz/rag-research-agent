@@ -15,6 +15,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
     db_pool = get_db_connection_pool()
     await db_pool.open()
+    app.state.db_pool = db_pool
     yield
 
     logger.info("Shutting down FastAPI server.")
